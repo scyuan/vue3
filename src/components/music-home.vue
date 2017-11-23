@@ -4,7 +4,7 @@
 		<swiper :options="swiperOption"  ref="mySwiper">  
             <!-- 这部分放你要渲染的那些内容 -->  
             <swiper-slide v-for='img in lunboList'> 
-                <img v-bind:src="img" width="100%" height="100%" alt="">
+                <img v-lazy="img" width="100%" height="100%" alt="">
             </swiper-slide>  
             <!-- 这是轮播的小圆点 -->  
             <div class="swiper-pagination" slot="pagination"></div>  
@@ -20,7 +20,7 @@
             <div class="gedanbox">
                 <div class="gedan" v-on:click='open(gedan.id)' v-if='index<3' v-for='(gedan,index) in gedanList'>
                     <!-- 歌单图片和描述 -->
-                    <img :src="gedan.picUrl" alt="">
+                    <img v-lazy="gedan.picUrl" alt="">
                     <p>{{gedan.name}}</p>
                     <p class="count" v-if='gedan.playCount>10000'><i class='icon-erji'></i>{{getPlayCount(gedan.playCount)}}万</p>
                     <p class="count" v-else>{{gedan.playCount}}</p>
@@ -28,7 +28,7 @@
             </div>
             <div class="gedanbox">
                 <div class="gedan" v-on:click='open(gedan.id)' v-if='index>2' v-for='(gedan,index) in gedanList'>
-                    <img :src="gedan.picUrl" alt="">
+                    <img v-lazy="gedan.picUrl" alt="">
                     <p>{{gedan.name}}</p>
                     <p class="count" v-if='gedan.playCount>10000'><i class='icon-erji'></i>{{getPlayCount(gedan.playCount)}}万</p>
                     <p class="count" v-else>{{gedan.playCount}}</p>
@@ -103,15 +103,6 @@
                             for(let i=0;i<res.data.banners.length;i++){
                                 _this.lunboList.push(res.data.banners[i].pic)
                             }
-                            _this.$nextTick(()=>{
-                                if (!this.helloScroll) {
-                                  this.helloScroll = new BScroll(this.$refs.musichome, {
-                                    click: true
-                                  });
-                                } else {
-                                  this.helloScroll.refresh();
-                                }
-                            })
                         }
                     )
             },
@@ -121,15 +112,6 @@
                         function(res){
                             console.log(res);
                             _this.gedanList = res.data.result
-                            _this.$nextTick(()=>{
-                                if (!this.helloScroll) {
-                                  this.helloScroll = new BScroll(this.$refs.musichome, {
-                                    click: true
-                                  });
-                                } else {
-                                  this.helloScroll.refresh();
-                                }
-                            })
                         }
                     )
             },

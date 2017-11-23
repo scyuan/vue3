@@ -20,6 +20,12 @@ import musicHome from './components/music-home'
 import mvHome from './components/mv-home'
 import radioHome from './components/radio-home'
 import '../static/swiper/swiper-3.4.2.min.css'
+
+import VueLazyload from "vue-lazyload"
+Vue.use(VueLazyload,{
+	error:'./../static/img/error.jpg',
+	loading:'./../static/img/loading.jpg',
+	attempt:2})
 const routes = [
 	{
 		path:'/',

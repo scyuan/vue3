@@ -1,13 +1,14 @@
 <template>
+<transition name='slide'>
 	<div class="play" v-if='flag'>
-		<audio id="audio" v-bind:src="url" v-on:canplay="canPlay"  v-on:timeupdate='timeUpdate'  controls="controls"></audio>
-		<div class="bg"><img class="blur" v-bind:src="picUrl" alt=""></div>
+		<audio id="audio" v-bind:src="url" v-on:canplay="canPlay"   v-on:timeupdate='timeUpdate'  controls="controls"></audio>
+		<div class="bg"><img class="blur" v-lazy="picUrlobj" alt=""></div>
 		<div class="title">
 			<i v-on:click='back()' class="icon-back"></i><div class="p"><p class="a">{{name}}</p><p class="b">{{singer.name}}</p></div><i class="icon-share"></i>
 		</div>
 		<div class="album-box">
 			<div class="tou"><div><img id='stick' class="pasue" src="../../assets/img/stick_bg.png" alt=""></div></div>
-			<div id="yuan" style="animation-play-state:paused" class="yuan"><div class="img"><img v-bind:src="picUrl" alt=""></div></div>
+			<div id="yuan" style="animation-play-state:paused" class="yuan"><div class="img"><img v-lazy="picUrlobj" alt=""></div></div>
 		</div>
 		<div class="bottom">
 			<div class="list">
@@ -34,6 +35,7 @@
 			</div>
 		</div>
 	</div>
+	</transition>
 </template>
 <script>
 	export default{
@@ -47,10 +49,16 @@
 				url:null,
 				from:null,
 				currTime:"00:00",
-				endTime:'00:00'
+				endTime:'00:00',
+				picUrlobj:{
+					src: null,
+        			error: "../../../static/img/play_default.jpg",
+        			loading: "../../../static/img/play_default.jpg"
+				}
 			}
 		},
 		methods:{
+
 			canPlay:function(){
 				//该事件表明音频可播放
 				//获取该音频的长度
@@ -66,6 +74,8 @@
 				this.endTime=minutes+':'+seconds;
 			},
 			timeUpdate:function(){
+				
+
 				//更新当前时间显示
 				//currTime==音频的当前播放时间
 				var time = document.getElementById('audio').currentTime
@@ -90,6 +100,15 @@
 
 				//原点走过的样式
 				document.getElementById('pass').style.width=left+'px';
+
+				//判断是否播放完
+				if(document.getElementById('audio').ended){
+					//音频结束
+					//所有动画都停止
+					document.getElementById('stick').className="pasue";
+					document.getElementById('yuan').style.animationPlayState='paused'
+					//下一首
+				}
 			},
 			play:function(){
 				if (document.getElementById('audio').paused) {
@@ -120,7 +139,7 @@
 					//歌曲编号
 					_this.song_id = res.data.privileges[0].id;
 					_this.name = res.data.songs[0].name;
-					_this.picUrl = res.data.songs[0].al.picUrl;
+					_this.picUrlobj.src = res.data.songs[0].al.picUrl;
 					_this.singer = res.data.songs[0].ar[0];
 					console.log('获取歌曲详情完成')
 				}).then(function(){
@@ -140,6 +159,16 @@
 	}
 </script>
 <style scoped>
+
+	.slide-enter-active {
+  		transition: all .3s;
+	}
+	.slide-leave-active {
+  		transition: all .3s;
+	}
+	.slide-enter, .slide-leave-to{
+  		transform: translateX(100%);
+	}
 	.pass{
 		width: 0px;
 		height: 2px;
@@ -360,8 +389,10 @@
 		background: #fff;
 		overflow: hidden;
 		border-radius: 50%;
+		text-align: center;
 	}
 	.yuan .img img{
+		height: 100%;
 		width: 100%;
 	}
 	@keyframes round{

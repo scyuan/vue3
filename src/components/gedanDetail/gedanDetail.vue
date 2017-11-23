@@ -1,4 +1,6 @@
 <template>
+
+<transition name="slide">
 	<div class="detail" v-show='flag'>
 		<div class="title">
 			<i class="icon-larrow" v-on:click='back()'></i>
@@ -49,6 +51,7 @@
 			</div>
 		</div>
 	</div>
+</transition>
 </template>
 <script>
 	export default{
@@ -85,6 +88,21 @@
 	}
 </script>
 <style scoped>
+	.slide-enter-active {
+  		transition: all .3s;
+	}
+	.slide-leave-active {
+  		transition: all .3s;
+	}
+	.slide-enter-to{
+		transform: translateX(0);
+	}
+	.slide-leave{
+		transform: translateX(0);
+	}
+	.slide-enter, .slide-leave-to{
+  		transform: translateX(100%);
+	}
 	.clearfix:after { 
 	    content: "."; 
 	    display: block; 
