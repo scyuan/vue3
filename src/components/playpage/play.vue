@@ -1,13 +1,13 @@
 <template>
 	<div class="play" v-if='flag'>
-		<audio id="audio" v-bind:src="url"  v-on:timeupdate='timeUpdate'  controls="controls"></audio>
+		<audio id="audio" v-bind:src="url" v-on:canplay="canPlay"  v-on:timeupdate='timeUpdate'  controls="controls"></audio>
 		<div class="bg"><img class="blur" v-bind:src="picUrl" alt=""></div>
 		<div class="title">
 			<i v-on:click='back()' class="icon-back"></i><div class="p"><p class="a">{{name}}</p><p class="b">{{singer.name}}</p></div><i class="icon-share"></i>
 		</div>
 		<div class="album-box">
-			<div class="tou"><div><img src="../../assets/img/stick_bg.png" alt=""></div></div>
-			<div class="yuan"><div class="img"><img v-bind:src="picUrl" alt=""></div></div>
+			<div class="tou"><div><img id='stick' class="pasue" src="../../assets/img/stick_bg.png" alt=""></div></div>
+			<div id="yuan" style="animation-play-state:paused" class="yuan"><div class="img"><img v-bind:src="picUrl" alt=""></div></div>
 		</div>
 		<div class="bottom">
 			<div class="list">
@@ -18,12 +18,12 @@
 			</div>
 			<div class="time">
 				<div class="start">{{currTime}}</div>
-				<div class="hengxian">
-					<div class="dian"></div>
-					<div class="pass"></div>
+				<div class="hengxian" style="height: 2px;width: 300px;margin:0 10px;background: #ccc;border-radius: 1px;position: relative;">
+					<div id="dian" class="dian"></div>
+					<div id='pass' class="pass"></div>
 					<div class="not-pass"></div>
 				</div>
-				<div class="end">00:00</div>
+				<div class="end">{{endTime}}</div>
 			</div>
 			<div class="caozuo">
 				<i class="icon-xhbf"></i>
@@ -46,32 +46,62 @@
 				name:null,
 				url:null,
 				from:null,
-				currTime:"00:00"
+				currTime:"00:00",
+				endTime:'00:00'
 			}
 		},
 		methods:{
+			canPlay:function(){
+				//该事件表明音频可播放
+				//获取该音频的长度
+				var total = document.getElementById('audio').duration;
+				var minutes = parseInt(total/60);
+				var seconds = parseInt(total%60);
+				if (minutes<10) {
+					minutes = "0"+minutes;
+				}
+				if (seconds<10) {
+					seconds = "0"+second;
+				}
+				this.endTime=minutes+':'+seconds;
+			},
 			timeUpdate:function(){
+				//更新当前时间显示
+				//currTime==音频的当前播放时间
 				var time = document.getElementById('audio').currentTime
 				var seconds = parseInt(time.toString().split('.')[0]);
-				var minutes = seconds/60;
-				if (minutes<9) {
+				console.log('seconds:'+seconds);
+				var minutes = parseInt(seconds/60);
+				if (minutes<10) {
 					minutes = "0"+minutes;
 				}
 				var second = seconds%60;
-				if (second<9) {
+				if (second<10) {
 					second = "0"+second;
 				}
 				this.currTime = minutes+":"+second;
-				alert(this.currTime);
+				//更新进度条
+				var total = document.getElementById('audio').duration;
+				//计算比例
+				var rate = time/total;
+				//获取总长度
+				var left = 245*rate;
+				document.getElementById('dian').style.left=left+'px';
+
+				//原点走过的样式
+				document.getElementById('pass').style.width=left+'px';
 			},
 			play:function(){
 				if (document.getElementById('audio').paused) {
 					document.getElementById('pp').className='icon-pause'
 					document.getElementById('audio').play();
+					document.getElementById('stick').className="";
+					document.getElementById('yuan').style.animationPlayState='running'
 				}else{
-					alert('暂停')
 					document.getElementById('audio').pause();
 					document.getElementById('pp').className='icon-play'
+					document.getElementById('stick').className="pasue";
+					document.getElementById('yuan').style.animationPlayState='paused'
 				}
 			},
 			back:function(){
@@ -99,7 +129,7 @@
 						console.log(res);
 						/*_this.url = res.data.data[0].url;*/
 						_this.url="http://music.163.com/song/media/outer/url?id="+id+".mp3"
-
+						
 					})
 				})
 			}
@@ -110,6 +140,14 @@
 	}
 </script>
 <style scoped>
+	.pass{
+		width: 0px;
+		height: 2px;
+		position: absolute;
+		background: #EC2D2D;
+		left: 0px;
+		top: 0px;
+	}
 	audio{
 		position: fixed;
 		z-index: 1000;
@@ -160,12 +198,7 @@
 		align-items: center;
 	}
 	.hengxian{
-		height: 2px;
-		width: 300px;
-		margin:0 10px;
-		background: #ccc;
-		border-radius: 1px;
-		position: relative;
+		
 	}
 	.dian{
 		width: 12px;
@@ -285,7 +318,7 @@
 		left: 0;right: 0;
 		top: 51px;
 		margin:0 auto;
-		width: 200px;
+		width: 300px;
 		height: 200px;
 		overflow: hidden;
 		z-index: 1000;
@@ -299,9 +332,14 @@
 		display: block;
 		position: absolute;
 		top: -22px;
-		left: 78px;
+		left: 128px;
 		width: 120px;
 		height: 180px;
+		transition: all 0.3s;
+		transform-origin: 20px 21px;
+	}
+	.pasue{
+		transform: rotate(-20deg);
 	}
 	.yuan{
 		width: 300px;

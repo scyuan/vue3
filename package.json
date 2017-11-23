@@ -13,6 +13,7 @@
     "test": "npm run unit && npm run e2e"
   },
   "dependencies": {
+    "axios": "^0.17.1",
     "better-scroll": "^1.4.2",
     "nprogress": "^0.2.0",
     "vue": "^2.5.2",

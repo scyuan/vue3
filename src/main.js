@@ -19,7 +19,7 @@ import Index from './components/Index'
 import musicHome from './components/music-home'
 import mvHome from './components/mv-home'
 import radioHome from './components/radio-home'
-import 'swiper/dist/css/swiper.css'
+import '../static/swiper/swiper-3.4.2.min.css'
 const routes = [
 	{
 		path:'/',
