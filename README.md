@@ -1,6 +1,7 @@
 ## vue仿网易云音乐
 
 > 闲来无聊，想着做个小东西玩，于是选择了比较多的音乐app。由于准备不充分，所以这个app存在着一些瑕疵，完成了一些小功能，界面交互也没有大的bug。
+(音乐api)[https://github.com/Binaryify/NeteaseCloudMusicApi]
 
 ### 技术栈
 
